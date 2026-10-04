@@ -4,6 +4,7 @@ pipeline {
 
     environment {
         MAVEN_HOME = 'C:\\Users\\Shruti\\Downloads\\apache-maven-3.9.11-bin\\apache-maven-3.9.11'
+        DOCKER_EXE = 'C:\\Users\\Shruti\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin\\docker.exe'
         DOCKER_IMAGE = 'utekar/todo-list-app:v1'
     }
 
@@ -13,7 +14,7 @@ pipeline {
             steps {
                 bat 'java -version'
                 bat 'call "%MAVEN_HOME%\\bin\\mvn.cmd" -version'
-                bat 'docker --version'
+                bat '"%DOCKER_EXE%" --version'
             }
         }
 
@@ -31,7 +32,7 @@ pipeline {
 
         stage('Docker Build') {
             steps {
-                bat 'docker build -t %DOCKER_IMAGE% .'
+                bat '"%DOCKER_EXE%" build -t %DOCKER_IMAGE% .'
             }
         }
 
@@ -46,9 +47,9 @@ pipeline {
                     )
                 ]) {
 
-                    bat 'echo %DOCKER_PASSWORD% | docker login -u %DOCKER_USERNAME% --password-stdin'
+                    bat 'echo %DOCKER_PASSWORD% | "%DOCKER_EXE%" login -u %DOCKER_USERNAME% --password-stdin'
 
-                    bat 'docker push %DOCKER_IMAGE%'
+                    bat '"%DOCKER_EXE%" push %DOCKER_IMAGE%'
                 }
             }
         }
