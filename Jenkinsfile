@@ -3,20 +3,29 @@ pipeline {
     agent any
 
     environment {
+        MAVEN_HOME = 'C:\\Users\\Shruti\\Downloads\\apache-maven-3.9.11-bin\\apache-maven-3.9.11'
         DOCKER_IMAGE = 'utekar/todo-list-app:v1'
     }
 
     stages {
 
+        stage('Check Tools') {
+            steps {
+                bat 'java -version'
+                bat 'call "%MAVEN_HOME%\\bin\\mvn.cmd" -version'
+                bat 'docker --version'
+            }
+        }
+
         stage('Maven Build') {
             steps {
-                bat 'mvn clean package -DskipTests'
+                bat 'call "%MAVEN_HOME%\\bin\\mvn.cmd" clean package -DskipTests'
             }
         }
 
         stage('Selenium Test') {
             steps {
-                bat 'mvn test'
+                bat 'call "%MAVEN_HOME%\\bin\\mvn.cmd" test'
             }
         }
 
@@ -28,6 +37,7 @@ pipeline {
 
         stage('Docker Push') {
             steps {
+
                 withCredentials([
                     usernamePassword(
                         credentialsId: 'dockerhub',
@@ -45,6 +55,7 @@ pipeline {
     }
 
     post {
+
         success {
             echo 'DevOps Pipeline Completed Successfully!'
         }
